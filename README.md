@@ -15,7 +15,7 @@ our discussion of fitting data.
 eg. in root: <br>
 root> .X RandomMeasuresP1.C
 
-You will turn in an updated version of either LSQFit.C or PSQFit.py containing your work and the plots in the exercise desc
+You will turn in an updated version of either LSQFit.C or PSQFit.py containing your work and the plots in the exercise description.
 
 
 Other files:
