@@ -139,7 +139,10 @@ int main(int argc, char **argv){
   	getX(x);
 	getY(x,y,err);
 	TVectorD results = bestfit(x, y, err, npoints);
-
+	h1->Fill(results[0],results[1]);
+	h2->Fill(results[0],results[2]);
+	h3->Fill(results[1],results[2]);
+	h4->Fill(results[3]);
 
   }
   // perform many least squares fits on different pseudo experiments here
