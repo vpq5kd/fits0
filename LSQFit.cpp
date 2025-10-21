@@ -7,7 +7,8 @@
 #include "TH1F.h"
 #include "TGClient.h"
 #include "TStyle.h"
-
+#include "TMatrixD.h"
+#include "TVectorD.h"
 
 #include <iostream>
 using namespace std;
@@ -84,12 +85,63 @@ int main(int argc, char **argv){
 
   
   // *** modify and add your code here ***
+  TMatrixD SolveLSQ(const TMatrixD &A, const TMatrixD &y){
+  	TMatrixD At = (A);
+	At.T();
+	TMatrixD ATAi(AT,TMatrixD::kMult,A);
+	ATAi.invert();
+	TMatrixD Adag(ATAi,TMatrixD::kMult,AT);
+	TMatrixD theta(Adag, TMatrixD::kMult,y);
+	return theta;
+  }
+
+  TVectorD bestfit(double *x, double *y, double *err, int npoints){
+  	TMatrixD A(npoints, 3);
+	TMatrixD Y(npoints, 1);
+
+	for (int i = 0; i<npoints; i++){
+		double lx = Log(x[i]);
+		A(i, 0) = 1.0;
+		A(i, 1) = lx;
+	        A(i, 2) = lx*lx;
+		Y(i, 0) = y[i];	
+	}
+	TMatrixD theta = SolveLSQ(A,Y);
+
+	double a = theta(0,0);
+	double b = theta(1,0);
+	double c = theta(2,0);
+
+	double y_fit = a +b*lx+c*lx*lx;
+	double chi2 = pow((y[i]-y_fit)/err[i],2); //developed with chatGPT
+	double chi2_reduced = chi2 / (npoints -3 );
+	
+	TVectorD results(4);
+	results[0] = a;
+	results[1] = b;
+	results[2] = c;
+	results[3] = chi2_reduced;
+
+	return results; 
+
+
+  }  
+
+  
 
   TH2F *h1 = new TH2F("h1","Parameter b vs a;a;b",100,0,1,100,0,1);
   TH2F *h2 = new TH2F("h2","Parameter c vs a;a;c",100,0,1,100,0,1);
   TH2F *h3 = new TH2F("h3","Parameter c vs b;b;c",100,0,1,100,0,1);
   TH1F *h4 = new TH1F("h4","reduced chi^2;;frequency",100,0,1);
+	
+  double x[npoints], y[npoints], err[npoints];
+  for (int i = 0; i < nexperiments; i++){
+  	getX(x);
+	getY(x,y,err);
+	TVectorD results = bestfit(x, y, err, npoints);
 
+
+  }
   // perform many least squares fits on different pseudo experiments here
   // fill histograms w/ required data
   
