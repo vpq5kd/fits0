@@ -137,12 +137,12 @@ int main(int argc, char **argv){
   // *** modify and add your code here ***
   
 
-  TH2F *h1 = new TH2F("h1","Parameter b vs a;a;b",100,0,1,100,0,1);
-  TH2F *h2 = new TH2F("h2","Parameter c vs a;a;c",100,0,1,100,0,1);
-  TH2F *h3 = new TH2F("h3","Parameter c vs b;b;c",100,0,1,100,0,1);
-  TH1F *h4 = new TH1F("h4","reduced chi^2;;frequency",100,0,1);
+  TH2F *h1 = new TH2F("h1","Parameter b vs a;a;b",100,0,2,100,0,2);
+  TH2F *h2 = new TH2F("h2","Parameter c vs a;a;c",100,0,2,100,0,2);
+  TH2F *h3 = new TH2F("h3","Parameter c vs b;b;c",100,0,2,100,0,2);
+  TH1F *h4 = new TH1F("h4","reduced chi^2;;frequency",100,0,2);
 
-  int nexperiments = 100;  
+  int nexperiments = 1000000;  
   double x[npoints], y[npoints], err[npoints];
   for (int i = 0; i < nexperiments; i++){
   	getX(x);
