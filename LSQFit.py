@@ -37,7 +37,7 @@ fig.show()
 
 
 # *** modify and add your code here ***
-
+#chi2 and for nr loop designed with chatgpt
 def bestfit(x,y,err):
   nPnts = len(lx)
   nPar  = 3
