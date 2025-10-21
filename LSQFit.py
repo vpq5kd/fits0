@@ -20,7 +20,7 @@ def getX(x):  # x = array-like
     step=(xmax-xmin)/npoints
     for i in range(npoints):
         x[i]=xmin+i*step
-        
+
 def getY(x,y,ey):  # x,y,ey = array-like
     for i in range(npoints):
         y[i]=f(x[i],pars)+gauss(0,sigma)
@@ -37,17 +37,47 @@ fig.show()
 
 
 # *** modify and add your code here ***
-nexperiments = 1000  # for example
 
+def bestfit(x,y,err):
+  nPnts = len(lx)
+  nPar  = 3
 
+  A=np.matrix(np.zeros((nPnts, nPar)))
+  #Fill the A matrix
+  for nr in range(nPnts):
+    A[nr,0] = 1
+    A[nr,1] = lx[nr]
+    A[nr,2] = lx[nr]*lx[nr]
+
+  for i in range(nPnts):
+    A[i] = A[i] / ley[i]
+  yw = (ly/ley).reshape(nPnts,1)
+  theta =  inv(np.transpose(A).dot(A)).dot(np.transpose(A)).dot(yw)
+
+  a = theta[0,0]
+  b = theta[1,0]
+  c = theta[2,0]
+
+  y_fit = a + b*np.log(x)+c*np.log(x)*np.log(x)
+  chi2 = np.sum(((y - y_fit)/err)**2)
+  chi2_reduced = chi2 / (npoints - 3)  
+  return a,b,c,chi2_reduced
 # perform many least squares fits on different pseudo experiments here
 # fill histograms w/ required data
+nexperiments = 1000
 
-par_a = np.random.rand(1000)   # simple placeholders for making the plot example
-par_b = np.random.rand(1000)   # these need to be filled using results from your fits
-par_c = np.random.rand(1000)
-chi2_reduced = np.random.rand(1000)
+par_a = np.zeros(nexperiments)   # simple placeholders for making the plot example
+par_b = np.zeros(nexperiments)   # these need to be filled using results from your fits
+par_c = np.zeros(nexperiments)
+chi2_reduced = np.zeros(nexperiments)
 
+
+for i in range(nexperiments):
+    getX(lx)
+    getY(lx, ly, ley)
+    par_a[i],par_b[i],par_c[i],chi2_reduced[i] = bestfit(lx,ly,ley)
+    
+    
 fig, axs = plt.subplots(2, 2)
 plt.tight_layout()
 
@@ -67,6 +97,6 @@ axs[1, 1].set_title('Reduce chi^2 distribution')
 fig.show()
 
 # **************************************
-  
+
 
 input("hit Enter to exit")
