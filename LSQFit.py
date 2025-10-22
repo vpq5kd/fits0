@@ -5,7 +5,7 @@ from matplotlib import pyplot as plt
 xmin=1.0
 xmax=20.0
 npoints=12
-sigma=0.2
+sigma=10
 lx=np.zeros(npoints)
 ly=np.zeros(npoints)
 ley=np.zeros(npoints)
@@ -60,25 +60,25 @@ def bestfit(x,y,err):
 
   y_fit = a + b*np.log(x)+c*np.log(x)*np.log(x)
   chi2 = np.sum(((y - y_fit)/err)**2)
-  chi2_reduced = chi2 / (npoints - 3)  
-  return a,b,c,chi2_reduced
+  chi2_reduced = chi2 / (npoints - 3)
+  return a,b,c,chi2_reduced,chi2
 # perform many least squares fits on different pseudo experiments here
 # fill histograms w/ required data
-nexperiments = 1000
+nexperiments = 10000
 
 par_a = np.zeros(nexperiments)   # simple placeholders for making the plot example
 par_b = np.zeros(nexperiments)   # these need to be filled using results from your fits
 par_c = np.zeros(nexperiments)
 chi2_reduced = np.zeros(nexperiments)
-
+chi2 = np.zeros(nexperiments)
 
 for i in range(nexperiments):
     getX(lx)
     getY(lx, ly, ley)
-    par_a[i],par_b[i],par_c[i],chi2_reduced[i] = bestfit(lx,ly,ley)
-    
-    
-fig, axs = plt.subplots(2, 2)
+    par_a[i],par_b[i],par_c[i],chi2_reduced[i], chi2[i] = bestfit(lx,ly,ley)
+
+
+fig, axs = plt.subplots(2, 4, figsize = (12, 8))
 plt.tight_layout()
 
 # careful, the automated binning may not be optimal for displaying your results!
@@ -94,6 +94,17 @@ axs[1, 0].set_title('Parameter c vs b')
 axs[1, 1].hist(chi2_reduced)
 axs[1, 1].set_title('Reduce chi^2 distribution')
 
+axs[0, 2].hist(par_a)
+axs[0, 2].set_title('Parameter a')
+
+axs[0, 3].hist(par_b)
+axs[0, 3].set_title('Parameter b')
+
+axs[1, 2].hist(par_c)
+axs[1, 2].set_title('Parameter c')
+
+axs[1, 3].hist(chi2)
+axs[1, 3].set_title('chi^2 distribution')
 fig.show()
 
 # **************************************
