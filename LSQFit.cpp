@@ -92,12 +92,12 @@ void leastsq(){
 	}
 
 	double chi2_reduced = chi2 / (npoints -3 );	
-	TVectorD results(4);
+	TVectorD results(5);
 	results[0] = a;
 	results[1] = b;
 	results[2] = c;
 	results[3] = chi2_reduced;
-
+	results[4] = chi2;
 	return results; 
 
 
@@ -142,6 +142,10 @@ int main(int argc, char **argv){
   TH2F *h3 = new TH2F("h3","Parameter c vs b;b;c",100,0,2,100,0,2);
   TH1F *h4 = new TH1F("h4","reduced chi^2;;frequency",100,0,2);
 
+  TH1F *h5 = new TH1F("h_a", "Parameter a; a; Frequency",100,0,2);
+  TH1F *h6 = new TH1F("h_b", "Parameter b; b; Frequency",100,0,2);
+  TH1F *h7 = new TH1F("h_c", "Parameter c; c; Frequency",100,0,2);
+  TH1F *h8 = new TH1F("h_chi", "chi^2;; Frequency",100,0,2);
   int nexperiments = 1000000;  
   double x[npoints], y[npoints], err[npoints];
   for (int i = 0; i < nexperiments; i++){
@@ -152,7 +156,10 @@ int main(int argc, char **argv){
 	h2->Fill(results[0],results[2]);
 	h3->Fill(results[1],results[2]);
 	h4->Fill(results[3]);
-
+	h5->Fill(results[0]);
+	h6->Fill(results[1]);
+	h7->Fill(results[2]);
+	h8->Fill(results[4]);
   }
   // perform many least squares fits on different pseudo experiments here
   // fill histograms w/ required data
@@ -165,6 +172,16 @@ int main(int argc, char **argv){
   tc2->cd(4); h4->Draw();
   
   tc2->Draw();
+  
+  TCanvas *tc3 = new TCanvas("c3","my study results",200,200,dw,dh);
+  tc3->Divide(2,2);
+  tc3->cd(1); h5->Draw();
+  tc3->cd(2); h6->Draw();
+  tc3->cd(3); h7->Draw();
+  tc3->cd(4); h8->Draw();
+  
+  tc3->Draw();
+
 
   // **************************************
   
